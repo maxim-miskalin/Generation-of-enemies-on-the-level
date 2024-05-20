@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Mob : MonoBehaviour
@@ -5,19 +6,21 @@ public class Mob : MonoBehaviour
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _minPositionForDeathY = -20f;
 
-    private Vector3 _direction;
+    private GameObject _target;
 
     private void Update()
     {
-        if (_direction != null)
-            transform.Translate(_direction * _speed * Time.deltaTime);
+        if (_target != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _target.transform.position, _speed * Time.deltaTime);
+        }
 
         if (transform.position.y < _minPositionForDeathY)
             Destroy(gameObject);
     }
 
-    public void SetDirection(Vector3 direction)
+    public void SetTarget(GameObject target)
     {
-        _direction = direction;
+        _target = target;
     }
 }

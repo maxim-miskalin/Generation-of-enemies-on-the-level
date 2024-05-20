@@ -1,40 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshCollider))]
 public class Spawner : MonoBehaviour
 {
     [SerializeField] private Mob _prefabMob;
-    [SerializeField] private float _turnY = 0f;
+    [SerializeField] private List<SpawnPoint> _spawnPoints = new();
     [SerializeField] private float _repeadRate = 2f;
 
-    private float _delay;
-    private float _maxRotationEuler = 360f;
-
-    private float _minPositionX;
-    private float _maxPositionX;
-    private float _minPositionZ;
-    private float _maxPositionZ;
-
-    private void Awake()
-    {
-        _minPositionX = GetComponent<Collider>().bounds.max.x;
-        _maxPositionX = GetComponent<Collider>().bounds.max.x;
-        _minPositionZ = GetComponent<Collider>().bounds.min.z;
-        _maxPositionZ = GetComponent<Collider>().bounds.max.z;
-
-        _delay = Random.Range(0, _delay);
-        _turnY = Random.Range(0, _maxRotationEuler);
-    }
+    private bool _isWork = true;
 
     private void Start()
     {
-       InvokeRepeating(nameof(CreateMob), _delay, _repeadRate);
+        StartCoroutine(CreateMob());
     }
 
-    private void CreateMob()
+    private IEnumerator CreateMob()
     {
-        Vector3 position = new(Random.Range(_minPositionX, _maxPositionX), 1, Random.Range(_minPositionZ, _maxPositionZ));
+        while (_isWork)
+        {
+            Vector3 direction;
+            Mob mob = Instantiate(_prefabMob);
+            mob.transform.position = GetSpawnPoint(out direction);
+            mob.SetDirection(direction);
 
-        Instantiate(_prefabMob, position, Quaternion.Euler(0, _turnY, 0));
+            yield return new WaitForSeconds(_repeadRate);
+        }
+    }
+
+    private Vector3 GetSpawnPoint(out Vector3 direction)
+    {
+        int numberSpawnPoint = Random.Range(0, _spawnPoints.Count);
+        direction = _spawnPoints[numberSpawnPoint].Direction;
+        return _spawnPoints[numberSpawnPoint].transform.position;
     }
 }

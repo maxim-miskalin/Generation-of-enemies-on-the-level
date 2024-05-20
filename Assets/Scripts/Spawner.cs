@@ -8,10 +8,13 @@ public class Spawner : MonoBehaviour
     [SerializeField] private List<SpawnPoint> _spawnPoints = new();
     [SerializeField] private float _repeadRate = 2f;
 
+    WaitForSeconds _wait;
     private bool _isWork = true;
 
     private void Start()
     {
+        _wait = new(_repeadRate);
+
         StartCoroutine(CreateMob());
     }
 
@@ -21,14 +24,14 @@ public class Spawner : MonoBehaviour
         {
             Vector3 direction;
             Mob mob = Instantiate(_prefabMob);
-            mob.transform.position = GetSpawnPoint(out direction);
+            mob.transform.position = GetSpawn(out direction);
             mob.SetDirection(direction);
 
-            yield return new WaitForSeconds(_repeadRate);
+            yield return _wait;
         }
     }
 
-    private Vector3 GetSpawnPoint(out Vector3 direction)
+    private Vector3 GetSpawn(out Vector3 direction)
     {
         int numberSpawnPoint = Random.Range(0, _spawnPoints.Count);
         direction = _spawnPoints[numberSpawnPoint].Direction;

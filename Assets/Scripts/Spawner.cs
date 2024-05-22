@@ -7,7 +7,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private List<SpawnPoint> _spawnPoints = new();
     [SerializeField] private float _repeadRate = 2f;
 
-    WaitForSeconds _wait;
+    private WaitForSeconds _wait;
     private bool _isWork = true;
     private SpawnPoint _currentSpawnPoint;
 
